@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IronGround — Deportes de Combate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #0D0F11;
+    --surface:  #16191D;
+    --card:     #1D2125;
+    --border:   #282C32;
+    --accent:   #D94522;
+    --accent2:  #F05A32;
+    --canvas:   #EDE9DF;
+    --muted:    #858C96;
+    --font-h:   'Oswald', sans-serif;
+    --font-b:   'Inter', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--canvas);
+    font-family: var(--font-b);
+    font-size: 15px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ── NAVBAR ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(13,15,17,0.94);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center;
+    padding: 0 5%; height: 64px; gap: 2rem;
+  }
+
+  .nav-logo {
+    font-family: var(--font-h);
+    font-size: 1.5rem; font-weight: 700;
+    letter-spacing: 0.04em;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-logo .emoji { font-size: 1.3rem; }
+
+  .nav-links {
+    display: flex; gap: 0; margin-left: auto;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: var(--font-h);
+    font-size: 0.85rem; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted);
+    padding: 0.4rem 0.9rem;
+    border-radius: 4px;
+    transition: color 0.2s, background 0.2s;
+  }
+  .nav-links a:hover { color: var(--canvas); background: var(--surface); }
+
+  .nav-cart {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 0.45rem 1.1rem;
+    border-radius: 4px;
+    font-family: var(--font-h);
+    font-size: 0.85rem; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .nav-cart:hover { background: var(--accent2); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding: 80px 5% 60px;
+    position: relative; overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(
+        60deg,
+        transparent,
+        transparent 28px,
+        rgba(255,255,255,0.018) 28px,
+        rgba(255,255,255,0.018) 29px
+      ),
+      repeating-linear-gradient(
+        -60deg,
+        transparent,
+        transparent 28px,
+        rgba(255,255,255,0.018) 28px,
+        rgba(255,255,255,0.018) 29px
+      );
+  }
+
+  .hero-glow {
+    position: absolute; top: 20%; right: 8%;
+    width: 520px; height: 520px;
+    background: radial-gradient(circle, rgba(217,69,34,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-content { position: relative; max-width: 700px; }
+
+  .hero-eyebrow {
+    font-family: var(--font-h);
+    font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.2rem;
+    display: flex; align-items: center; gap: 0.7rem;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: block; width: 28px; height: 2px;
+    background: var(--accent);
+  }
+
+  .hero h1 {
+    font-family: var(--font-h);
+    font-size: clamp(3rem, 7vw, 6rem);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+
+  .hero-sub {
+    font-size: 1.05rem;
+    color: var(--muted);
+    max-width: 480px;
+    margin-bottom: 2.5rem;
+    line-height: 1.7;
+  }
+
+  .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    padding: 0.8rem 2rem;
+    border-radius: 4px;
+    font-family: var(--font-h);
+    font-size: 0.9rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    transition: background 0.2s, transform 0.15s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--canvas);
+    padding: 0.8rem 2rem;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    font-family: var(--font-h);
+    font-size: 0.9rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    transition: border-color 0.2s, background 0.2s;
+    display: inline-block;
+  }
+  .btn-ghost:hover { border-color: var(--muted); background: var(--surface); }
+
+  .hero-stats {
+    position: absolute; bottom: 60px; right: 5%;
+    display: flex; gap: 2.5rem;
+    border-left: 2px solid var(--accent);
+    padding-left: 1.5rem;
+  }
+  .stat-num {
+    font-family: var(--font-h);
+    font-size: 2rem; font-weight: 700;
+    color: var(--canvas);
+    display: block;
+  }
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── DISCIPLINE BAR ── */
+  .disc-bar {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 5%;
+    display: flex; gap: 0.75rem; flex-wrap: wrap;
+    align-items: center;
+  }
+  .disc-label {
+    font-family: var(--font-h);
+    font-size: 0.7rem; font-weight: 600;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--muted);
+    margin-right: 0.5rem;
+  }
+  .disc-pill {
+    padding: 0.35rem 1rem;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: var(--font-h);
+    font-size: 0.8rem; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .disc-pill:hover, .disc-pill.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  /* ── SECTION BASE ── */
+  section { padding: 5rem 5%; }
+
+  .section-head {
+    margin-bottom: 3rem;
+  }
+  .section-eyebrow {
+    font-family: var(--font-h);
+    font-size: 0.7rem; font-weight: 600;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+  }
+  .section-title {
+    font-family: var(--font-h);
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── PRODUCT GRID ── */
+  .products-section { background: var(--bg); }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .product-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .product-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+
+  .product-img {
+    aspect-ratio: 4/3;
+    background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .product-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  .product-card:hover .product-img img {
+    transform: scale(1.04);
+  }
+  .product-img::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(13,15,17,0.4) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .product-badge {
+    position: absolute; top: 10px; left: 10px; z-index: 2;
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--font-h);
+    font-size: 0.65rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.2rem 0.55rem;
+    border-radius: 3px;
+  }
+  .product-disc {
+    position: absolute; top: 10px; right: 10px; z-index: 2;
+    background: rgba(13,15,17,0.75);
+    color: var(--muted);
+    font-family: var(--font-h);
+    font-size: 0.6rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.2rem 0.55rem;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+
+  .product-info { padding: 1rem 1.1rem 1.2rem; }
+
+  .product-brand {
+    font-size: 0.7rem; font-weight: 500;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+  }
+  .product-name {
+    font-family: var(--font-h);
+    font-size: 1.05rem; font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.6rem;
+    color: var(--canvas);
+  }
+  .product-bottom {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .product-price {
+    font-family: var(--font-h);
+    font-size: 1.2rem; font-weight: 700;
+    color: var(--canvas);
+  }
+  .product-sizes {
+    display: flex; gap: 0.3rem;
+  }
+  .size-tag {
+    font-size: 0.65rem; font-weight: 600;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 0.15rem 0.4rem;
+    border-radius: 3px;
+  }
+
+  .add-btn {
+    margin-top: 0.8rem;
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--canvas);
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-family: var(--font-h);
+    font-size: 0.8rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .add-btn:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* ── INTERACTIVE CART DRAWER (NUEVO) ── */
+  .cart-drawer {
+    position: fixed; top: 0; right: -420px; width: 400px; height: 100vh;
+    background: rgba(22, 25, 29, 0.96);
+    backdrop-filter: blur(12px);
+    border-left: 1px solid var(--border);
+    z-index: 200; display: flex; flex-direction: column;
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 2rem 1.5rem;
+    color: var(--canvas);
+    box-shadow: -10px 0 30px rgba(0,0,0,0.6);
+  }
+  .cart-drawer.open { right: 0; }
+  .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
+  .cart-header h3 { font-family: var(--font-h); font-size: 1.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .close-cart { background: transparent; border: none; color: var(--muted); font-size: 1.6rem; cursor: pointer; transition: color 0.2s; }
+  .close-cart:hover { color: var(--accent); }
+  
+  .cart-items-container { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; padding-right: 0.5rem; }
+  .cart-items-container::-webkit-scrollbar { width: 4px; }
+  .cart-items-container::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  
+  .cart-item { display: flex; gap: 1rem; align-items: center; background: var(--card); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border); }
+  .cart-item-img { width: 55px; height: 55px; object-fit: cover; border-radius: 4px; background: var(--surface); }
+  .cart-item-details { flex: 1; }
+  .cart-item-name { font-family: var(--font-h); font-size: 0.95rem; text-transform: uppercase; color: var(--canvas); line-height: 1.2; margin-bottom: 0.2rem; }
+  .cart-item-brand { font-size: 0.65rem; text-transform: uppercase; color: var(--muted); letter-spacing: 0.05em; }
+  .cart-item-price { color: var(--accent2); font-family: var(--font-h); font-size: 1.1rem; font-weight: 600; margin-top: 0.2rem; }
+  .remove-item { background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 1.1rem; transition: color 0.2s; padding: 0.2rem; }
+  .remove-item:hover { color: var(--accent); }
+  
+  .cart-empty-msg { color: var(--muted); text-align: center; margin-top: 3rem; font-size: 0.95rem; }
+
+  .cart-footer { border-top: 1px solid var(--border); padding-top: 1.5rem; margin-top: 1rem; }
+  .cart-total { display: flex; justify-content: space-between; font-family: var(--font-h); font-size: 1.4rem; text-transform: uppercase; margin-bottom: 1.2rem; letter-spacing: 0.02em; }
+  .cart-total span:last-child { color: var(--canvas); font-weight: 700; }
+  .checkout-btn { width: 100%; background: var(--accent); color: #fff; border: none; padding: 0.9rem; font-family: var(--font-h); font-size: 0.95rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer; border-radius: 4px; transition: background 0.2s; }
+  .checkout-btn:hover { background: var(--accent2); }
+  
+  .cart-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 199; display: none; backdrop-filter: blur(4px); }
+  .cart-overlay.open { display: block; }
+
+  /* ── CATEGORIES ── */
+  .cats-section { background: var(--surface); }
+
+  .cats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+  }
+  .cat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.8rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .cat-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .cat-icon { font-size: 2rem; margin-bottom: 0.7rem; display: block; }
+  .cat-name {
+    font-family: var(--font-h);
+    font-size: 0.85rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--canvas);
+    margin-bottom: 0.2rem;
+  }
+  .cat-count { font-size: 0.72rem; color: var(--muted); }
+
+  /* ── BANNER ── */
+  .banner {
+    margin: 0 5%; border-radius: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 3rem 3.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 2rem;
+    position: relative; overflow: hidden;
+  }
+  .banner::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: var(--accent);
+  }
+  .banner-text .label {
+    font-family: var(--font-h);
+    font-size: 0.7rem; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 0.5rem;
+  }
+  .banner-text h2 {
+    font-family: var(--font-h);
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 700; text-transform: uppercase;
+    color: var(--canvas);
+  }
+  .banner-text p { font-size: 0.9rem; color: var(--muted); margin-top: 0.5rem; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 3rem 5% 2rem;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 3rem;
+    margin-bottom: 2.5rem;
+  }
+  .footer-brand .logo {
+    font-family: var(--font-h);
+    font-size: 1.3rem; font-weight: 700;
+    margin-bottom: 0.8rem;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .footer-brand .logo span { color: var(--accent); }
+  .footer-brand p { font-size: 0.85rem; color: var(--muted); max-width: 260px; line-height: 1.7; }
+
+  .footer-col h4 {
+    font-family: var(--font-h);
+    font-size: 0.7rem; font-weight: 600;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 1rem;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col li { margin-bottom: 0.5rem; }
+  .footer-col a { font-size: 0.88rem; color: var(--canvas); opacity: 0.7; transition: opacity 0.2s; }
+  .footer-col a:hover { opacity: 1; color: var(--accent); }
+
+  .footer-bottom {
+    border-top: 1px solid var(--border);
+    padding-top: 1.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-bottom p { font-size: 0.8rem; color: var(--muted); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .hero-stats { position: static; margin-top: 2rem; border-left: none; border-top: 1px solid var(--border); padding: 1.5rem 0 0; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .banner { flex-direction: column; text-align: center; }
+    .banner::before { width: 100%; height: 4px; top: 0; bottom: auto; }
+    .cart-drawer { width: 100%; max-width: 100%; right: -100%; }
+  }
+  @media (max-width: 480px) {
+    .footer-grid { grid-template-columns: 1fr; }
+    .products-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <span class="emoji">🥋</span>
+    Iron<span>Ground</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#productos">Productos</a></li>
+    <li><a href="#categorias">Categorías</a></li>
+    <li><a href="#">Marcas</a></li>
+    <li><a href="#">Nosotros</a></li>
+  </ul>
+  <button class="nav-cart" id="open-cart-btn">
+    🛒 Carrito (0)
+  </button>
+</nav>
+
+<div class="cart-overlay" id="cart-overlay"></div>
+<div class="cart-drawer" id="cart-drawer">
+  <div class="cart-header">
+    <h3>Tu Carrito</h3>
+    <button class="close-cart" id="close-cart-btn">✕</button>
+  </div>
+  <div class="cart-items-container" id="cart-items-container">
+    </div>
+  <div class="cart-footer">
+    <div class="cart-total">
+      <span>Total:</span>
+      <span id="cart-total-value">$0</span>
+    </div>
+    <button class="checkout-btn">Iniciar Compra</button>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Nueva colección 2025</p>
+    <h1>Equipate<br>para <em>ganar</em><br>en el piso</h1>
+    <p class="hero-sub">Indumentaria y equipamiento para BJJ, MMA, Muay Thai, Boxeo y Lucha. Solo productos nuevos, marcas especializadas.</p>
+    <div class="hero-ctas">
+      <a href="#productos" class="btn-primary">Ver productos</a>
+      <a href="#categorias" class="btn-ghost">Por disciplina</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div>
+      <span class="stat-num">500+</span>
+      <span class="stat-label">Productos</span>
+    </div>
+    <div>
+      <span class="stat-num">5</span>
+      <span class="stat-label">Disciplinas</span>
+    </div>
+    <div>
+      <span class="stat-num">30+</span>
+      <span class="stat-label">Marcas</span>
+    </div>
+  </div>
+</div>
+
+<div class="disc-bar">
+  <span class="disc-label">Disciplina</span>
+  <button class="disc-pill active" onclick="filterDisc(this,'todos')">Todos</button>
+  <button class="disc-pill" onclick="filterDisc(this,'bjj')">BJJ</button>
+  <button class="disc-pill" onclick="filterDisc(this,'mma')">MMA</button>
+  <button class="disc-pill" onclick="filterDisc(this,'muaythai')">Muay Thai</button>
+  <button class="disc-pill" onclick="filterDisc(this,'boxeo')">Boxeo</button>
+  <button class="disc-pill" onclick="filterDisc(this,'lucha')">Lucha</button>
+</div>
+
+<section class="products-section" id="productos">
+  <div class="section-head">
+    <p class="section-eyebrow">Catálogo</p>
+    <h2 class="section-title">Productos destacados</h2>
+  </div>
+  <div class="products-grid" id="product-grid">
+
+    <div class="product-card" data-disc="bjj" data-id="1" data-brand="Tatami" data-name="Gi Estilo A3 Blanco" data-price="189990" data-img="images/kimono.jpg">
+      <div class="product-img">
+        <img src="images/kimono.jpg" alt="Gi Estilo A3 Blanco">
+        <div class="product-badge">Nuevo</div>
+        <div class="product-disc">BJJ</div>
+      </div>
+      <div class="product-info">
+        <p class="product-brand">Tatami</p>
+        <p class="product-name">Gi Estilo A3 Blanco</p>
+        <div class="product-bottom">
+          <span class="product-price">$189.990</span>
+          <div class="product-sizes">
+            <span class="size-tag">A1</span>
+            <span class="size-tag">A2</span>
+            <span class="size-tag">A3</span>
+          </div>
+        </div>
+        <button class="add-btn">Agregar al carrito</button>
+      </div>
+    </div>
+
+    <div class="product-card" data-disc="boxeo" data-id="2" data-brand="Venum" data-name="Guantes Contender 16oz" data-price="94990" data-img="images/venumcontender.jpg">
+      <div class="product-img">
+        <img src="images/venumcontender.jpg" alt="Guantes Contender 16oz">
+        <div class="product-badge">Más vendido</div>
+        <div class="product-disc">Boxeo</div>
+      </div>
+      <div class="product-info">
+        <p class="product-brand">Venum</p>
+        <p class="product-name">Guantes Contender 16oz</p>
+        <div class="product-bottom">
+          <span class="product-price">$94.990</span>
+          <div class="product-sizes">
+            <span class="size-tag">12oz</span>
+            <span class="size-tag">14oz</span>
+            <span class="size-tag">16oz</span>
+          </div>
+        </div>
+        <button class="add-btn">Agregar al carrito</button>
+      </div>
+    </div>
+
+    <div class="product-card" data-disc="muaythai" data-id="3" data-brand="Fairtex" data-name="Shorts MT Pro Rojo" data-price="54990" data-img="images/fairtex.jpg">
+      <div class="product-img">
+        <img src="images/fairtex.jpg" alt="Shorts MT Pro Rojo">
+        <div class="product-disc">Muay Thai</div>
+      </div>
+      <div class="product-info">
+        <p class="product-brand">Fairtex</p>
+        <p class="product-name">Shorts MT Pro Rojo</p>
+        <div class="product-bottom">
+          <span class="product-price">$54.990</span>
+          <div class="product-sizes">
+            <span class="size-tag">S</span>
+            <span class="size-tag">M</span>
+            <span class="size-tag">L</span>
+            <span class="size-tag">XL</span>
+          </div>
+        </div>
+        <button class="add-btn">Agregar al carrito</button>
+      </div>
+    </div>
+
+    <div class="product-card" data-disc="mma" data-id="4" data-brand="Hayabusa" data-name="Guantes MMA T3 4oz" data-price="79990" data-img="images/hayabusa.jpg">
+      <div class="product-img">
+        <img src="images/hayabusa.jpg" alt="Guantes MMA T3 4oz">
+        <div class="product-badge">Nuevo</div>
+        <div class="product-disc">MMA</div>
+      </div>
+      <div class="product-info">
+        <p class="product-brand">Hayabusa</p>
+        <p class="product-name">Guantes MMA T3 4oz</p>
+        <div class="product-bottom">
+          <span class="product-price">$79.990</span>
+          <div class="product-sizes">
+            <span class="size-tag">S/M</span>
+            <span class="size-tag">L/XL</span>
+          </div>
+        </div>
+        <button class="add-btn">Agregar al carrito</button>
+      </div>
+    </div>
+
+    <div class="product-card" data-disc="bjj" data-id="5" data-brand="Scramble" data-name="Rashguard Comp V2 LS" data-price="49990" data-img="images/rashguard.jpg">
+      <div class="product-img">
+        <img src="images/rashguard.jpg" alt="Rashguard Comp V2 LS">
+        <div class="product-disc">BJJ</div>
+      </div>
+      <div class="product-info">
+        <p class="product-brand">Scramble</p>
+        <p class="product-name">Rashguard Comp V2 LS</p>
+        <div class="product-bottom">
+          <span class="product-price">$49.990</span>
+          <div class="product-sizes">
+            <span class="size-tag">S</span>
+            <span class="size-tag">M</span>
+            <span class="size-tag">L</span>
+          </div>
+        </div>
+        <button class="add-btn">Agregar al carrito</button>
+      </div>
+    </div>
+
+    <div class="product-card" data-disc="boxeo" data-id="6" data-brand="Ringside" data-name="Casco Amateur Sin Nariz" data-price="72990" data-img="images/ringside.jpg">
+      <div class="product-img">
+        <img src="images/ringside.jpg" alt="Casco Amateur Sin Nariz">
+        <div class="product-badge">Oferta</div>
+        <div class="product-disc">Boxeo</div>
+      </div>
+      <div class="product-info">
+        <p class="product-brand">Ringside</p>
+        <p class="product-name">Casco Amateur Sin Nariz</p>
+        <div class="product-bottom">
+          <span class="product-price">$72.990</span>
+          <div class="product-sizes">
+            <span class="size-tag">M</span>
+            <span class="size-tag">L</span>
+          </div>
+        </div>
+        <button class="add-btn">Agregar al carrito</button>
+      </div>
+    </div>
+
+    <div class="product-card" data-disc="lucha" data-id="7" data-brand="ASICS" data-name="Botines Matflex 6" data-price="84990" data-img="images/matflex.jpg">
+      <div class="product-img">
+        <img src="images/matflex.jpg" alt="Botines Matflex 6">
+        <div class="product-disc">Lucha</div>
+      </div>
+      <div class="product-info">
+        <p class="product-brand">ASICS</p>
+        <p class="product-name">Botines Matflex 6</p>
+        <div class="product-bottom">
+          <span class="product-price">$84.990</span>
+          <div class="product-sizes">
+            <span class="size-tag">39</span>
+            <span class="size-tag">40</span>
+            <span class="size-tag">41</span>
+            <span class="size-tag">42</span>
+          </div>
+        </div>
+        <button class="add-btn">Agregar al carrito</button>
+      </div>
+    </div>
+
+    <div class="product-card" data-disc="mma" data-id="8" data-brand="Venum" data-name="Short UFC Authentic" data-price="44990" data-img="images/shortufc.png">
+      <div class="product-img">
+        <img src="images/shortufc.png" alt="Short UFC Authentic">
+        <div class="product-disc">MMA</div>
+      </div>
+      <div class="product-info">
+        <p class="product-brand">Venum</p>
+        <p class="product-name">Short UFC Authentic</p>
+        <div class="product-bottom">
+          <span class="product-price">$44.990</span>
+          <div class="product-sizes">
+            <span class="size-tag">S</span>
+            <span class="size-tag">M</span>
+            <span class="size-tag">L</span>
+            <span class="size-tag">XL</span>
+          </div>
+        </div>
+        <button class="add-btn">Agregar al carrito</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="banner" style="margin-bottom: 0;">
+  <div class="banner-text">
+    <p class="label">Entrega en todo el país</p>
+    <h2>Comprá online, entrenás mañana</h2>
+    <p>Envíos a domicilio en 24–72 hs. Cambio de talle sin costo.</p>
+  </div>
+  <a href="#productos" class="btn-primary">Ver todo el catálogo</a>
+</div>
+
+<section class="cats-section" id="categorias">
+  <div class="section-head">
+    <p class="section-eyebrow">Equipamiento</p>
+    <h2 class="section-title">Por categoría</h2>
+  </div>
+  <div class="cats-grid">
+    <div class="cat-card">
+      <span class="cat-icon">🥊</span>
+      <p class="cat-name">Guantes</p>
+      <p class="cat-count">48 productos</p>
+    </div>
+    <div class="cat-card">
+      <span class="cat-icon">🥋</span>
+      <p class="cat-name">Gis</p>
+      <p class="cat-count">34 productos</p>
+    </div>
+    <div class="cat-card">
+      <span class="cat-icon">👕</span>
+      <p class="cat-name">Rashguards</p>
+      <p class="cat-count">62 productos</p>
+    </div>
+    <div class="cat-card">
+      <span class="cat-icon">🩳</span>
+      <p class="cat-name">Shorts</p>
+      <p class="cat-count">55 productos</p>
+    </div>
+    <div class="cat-card">
+      <span class="cat-icon">🛡️</span>
+      <p class="cat-name">Protecciones</p>
+      <p class="cat-count">39 productos</p>
+    </div>
+    <div class="cat-card">
+      <span class="cat-icon">👟</span>
+      <p class="cat-name">Calzado</p>
+      <p class="cat-count">22 productos</p>
+    </div>
+    <div class="cat-card">
+      <span class="cat-icon">🎒</span>
+      <p class="cat-name">Bolsos</p>
+      <p class="cat-count">18 productos</p>
+    </div>
+    <div class="cat-card">
+      <span class="cat-icon">🩹</span>
+      <p class="cat-name">Vendas</p>
+      <p class="cat-count">29 productos</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo">🥋 Iron<span>Ground</span></div>
+      <p>Tu tienda especializada en deportes de combate. Productos nuevos, marcas líderes, para todos los niveles.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Disciplinas</h4>
+      <ul>
+        <li><a href="#">BJJ</a></li>
+        <li><a href="#">MMA</a></li>
+        <li><a href="#">Muay Thai</a></li>
+        <li><a href="#">Boxeo</a></li>
+        <li><a href="#">Lucha</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Ayuda</h4>
+      <ul>
+        <li><a href="#">Guía de talles</a></li>
+        <li><a href="#">Envíos</a></li>
+        <li><a href="#">Cambios</a></li>
+        <li><a href="#">Contacto</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Cuenta</h4>
+      <ul>
+        <li><a href="#">Mis pedidos</a></li>
+        <li><a href="#">Favoritos</a></li>
+        <li><a href="#">Registrarse</a></li>
+        <li><a href="#">Ingresar</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 IronGround. Todos los derechos reservados.</p>
+    <p>Hecho con 💪 en Argentina</p>
+  </div>
+</footer>
+
+<script>
+  // Filtrado por disciplinas
+  function filterDisc(btn, disc) {
+    document.querySelectorAll('.disc-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.product-card').forEach(card => {
+      if (disc === 'todos' || card.dataset.disc === disc) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+
+  // Estado del Carrito Integrado
+  let cart = [];
+
+  // Elementos del DOM
+  const cartDrawer = document.getElementById('cart-drawer');
+  const cartOverlay = document.getElementById('cart-overlay');
+  const openCartBtn = document.getElementById('open-cart-btn');
+  const closeCartBtn = document.getElementById('close-cart-btn');
+  const cartItemsContainer = document.getElementById('cart-items-container');
+  const cartTotalValue = document.getElementById('cart-total-value');
+
+  // Abrir y Cerrar Carrito
+  function toggleCart() {
+    cartDrawer.classList.toggle('open');
+    cartOverlay.classList.toggle('open');
+  }
+
+  openCartBtn.addEventListener('click', toggleCart);
+  closeCartBtn.addEventListener('click', toggleCart);
+  cartOverlay.addEventListener('click', toggleCart);
+
+  // Formatear precios a moneda local
+  function formatPrice(number) {
+    return '$' + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
+
+  // Renderizar los productos dentro del Carrito
+  function renderCart() {
+    openCartBtn.textContent = `🛒 Carrito (${cart.length})`;
+
+    if (cart.length === 0) {
+      cartItemsContainer.innerHTML = '<p class="cart-empty-msg">Tu carrito está vacío.</p>';
+      cartTotalValue.textContent = '$0';
+      return;
+    }
+
+    cartItemsContainer.innerHTML = '';
+    let total = 0;
+
+    cart.forEach((item, index) => {
+      total += item.price;
+      
+      const itemElement = document.createElement('div');
+      itemElement.classList.add('cart-item');
+      itemElement.innerHTML = `
+        <img src="${item.img}" alt="${item.name}" class="cart-item-img">
+        <div class="cart-item-details">
+          <p class="cart-item-brand">${item.brand}</p>
+          <p class="cart-item-name">${item.name}</p>
+          <p class="cart-item-price">${formatPrice(item.price)}</p>
+        </div>
+        <button class="remove-item" onclick="removeFromCart(${index})">✕</button>
+      `;
+      cartItemsContainer.appendChild(itemElement);
+    });
+
+    cartTotalValue.textContent = formatPrice(total);
+  }
+
+  // Agregar un producto al array
+  document.querySelectorAll('.add-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const card = this.closest('.product-card');
+      const product = {
+        id: card.dataset.id,
+        name: card.dataset.name,
+        brand: card.dataset.brand,
+        price: parseInt(card.dataset.price),
+        img: card.dataset.img
+      };
+
+      cart.push(product);
+      renderCart();
+
+      // Feedback visual del botón al hacer click
+      this.textContent = '✓ Agregado';
+      this.style.background = '#1a8a4a';
+      this.style.borderColor = '#1a8a4a';
+      this.style.color = '#fff';
+      setTimeout(() => {
+        this.textContent = 'Agregar al carrito';
+        this.style.background = '';
+        this.style.borderColor = '';
+        this.style.color = '';
+      }, 1200);
+    });
+  });
+
+  // Eliminar un producto del array por su posición
+  window.removeFromCart = function(index) {
+    cart.splice(index, 1);
+    renderCart();
+  };
+
+  // Inicialización
+  renderCart();
+</script>
+</body>
+</html>
